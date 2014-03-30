@@ -3,81 +3,28 @@
 
 =head1 NAME
 
-Eixo::Docker - Perl suite of modules to interact with Docker (http://docker.io) 
+Eixo::Docker - Suite of Perl modules to interact with Docker  
 
-
-=head1 DEPENDENCIES
-
-Currently this module has the following dependencies:
-
-
-=over
-
-=item *
-
-JSON >= 2.50,
-
-
-=item *
-
-LWP::UserAgent >= 5.0,
-
-
-=item *
-
-Net::HTTP   >= 6.06,
-
-
-=item *
-
-HTTP::Server::Simple::CGI (for testing purpose)
-
-
-=back
-
-
-=head1 USAGE
-
-=over
-
-=item *
+=head1 SYNOPSIS
 
 First we need docker api server running in a tcp socket
 
-   For example, to run api in localhost:4243, add this line to B</etc/default/docker>
+- For example, to run api in localhost:4243, add this line to B</etc/default/docker>
 
     DOCKER_OPTS="-H 127.0.0.1:4243 -d"
 
-And restart docker service
+- And restart docker service
 
-
-
-=item *
+    $ sudo service docker restart
 
 Now to interact with it, instantiate a docker api client with the tcp socket url of the docker API:
-
-
-
-=back
 
     use Eixo::Docker::Api;
     
     my $a = Eixo::Docker::Api->new('http://127.0.0.1:4243');
 
 
-=over
-
-=item *
-
-From now on you can call all the Docker api methods throught api products (B<containers> and B<images>), passing the args indicated in L<api documentation|http://docs.docker.io/en/latest/reference/api/docker\_remote\_api/>:
-
-
-Usage examples: 
-
-
-
-=back
-
+From now on you can call all the Docker api methods throught api products (B<containers> and B<images>), passing the args indicated in L<api documentation|http://docs.docker.io/en/latest/reference/api/docker_remote_api/>:
 
     #
     # CONTAINERS
@@ -145,6 +92,11 @@ Usage examples:
     ## delete
     $image->delete();
 
+
+=head1 DESCRIPTION
+
+The purpose of this library is to provide a set of modules to interact in a
+simple, but powerful way, with the L<Docker remote api |http://docs.docker.io/en/latest/reference/api/docker_remote_api/>
 
 B<Containers> supported methods:
 
@@ -266,12 +218,46 @@ delete
 =back
 
 
+=head1 DEPENDENCIES
+
+Currently this module has the following dependencies:
+
+
+=over
+
+=item *
+
+Eixo::Base >= 1.0,
+
+=item *
+
+Eixo::Rest >=  1.0,
+
+=item *
+
+JSON >= 2.50,
+
+=item *
+
+Net::HTTP >= 6.06,
+
+
+=item *
+
+HTTP::Server::Simple::CGI (for testing purpose)
+
+
+=back
+
+
 =head1 CAVEATS
 
 - No unix socket support, currently only supports tcp connections to Docker API.
 
 
-=head2 To setup development environment:
+=head1 DEVELOPMENT
+
+To setup development environment:
 
 Ubuntu 12.04 64bits:
 
@@ -321,11 +307,11 @@ export B<DOCKER_TEST_HOST> var to run integration tests
 More info at L<http://docs.docker.io>
 
 
-=head1 AUTHORS
+=head1 AUTHOR
 
-Francisco Maseda, E<frmadem@gmail.com>
+Francisco Maseda, <frmadem@gmail.com>
 
-Javier Gomez, E<alambike@gmail.com>
+Javier Gomez, <alambike@gmail.com>
 
 
 =head1 COPYRIGHT AND LICENSE
@@ -338,10 +324,12 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    L<http://www.apache.org/licenses/LICENSE-2.0>
+L<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+=cut

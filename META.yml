@@ -1,25 +1,26 @@
 ---
-abstract: unknown
+abstract: 'Suite of Perl modules to interact with Docker  '
 author:
-  - unknown
+  - 'Francisco Maseda <frmadem@gmail.com>'
+  - 'Javier Gomez <alambike@gmail.com>'
 build_requires:
-  ExtUtils::MakeMaker: 0
+  ExtUtils::MakeMaker: '0'
 configure_requires:
-  ExtUtils::MakeMaker: 0
+  ExtUtils::MakeMaker: '0'
 dynamic_config: 1
-generated_by: 'ExtUtils::MakeMaker version 6.94, CPAN::Meta::Converter version 2.120351'
+generated_by: 'ExtUtils::MakeMaker version 6.94, CPAN::Meta::Converter version 2.140640'
 license: unknown
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+  version: '1.4'
 name: Eixo-Docker
 no_index:
   directory:
     - t
     - inc
 requires:
-  Eixo::Base: 1
-  Eixo::Rest: 1
-  JSON: 2.5
-  Net::HTTP: 6.06
-version: 1.063
+  Eixo::Base: '1'
+  Eixo::Rest: '1'
+  JSON: '2.5'
+  Net::HTTP: '6.06'
+version: '1.065'
