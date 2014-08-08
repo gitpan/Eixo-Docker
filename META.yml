@@ -23,4 +23,4 @@ requires:
   Eixo::Rest: '1'
   JSON: '2.5'
   Net::HTTP: '6.06'
-version: '1.070'
+version: '1.103'

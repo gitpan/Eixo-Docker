@@ -33,7 +33,20 @@ SKIP: {
 
         my $i = $a->images->build_from_dir(
             t => $TEST_IMAGE_NAME,
-            DIR => $tempdir->dirname
+            DIR => $tempdir->dirname,
+            onProgress => sub {
+                my $resp;
+                eval { 
+                    $resp = JSON->new->utf8->decode($_[0]);
+                };
+                
+                if(!$@ && exists($resp->{stream})){
+                    print $resp->{stream};
+                }
+                else {
+                    print $_[0];
+                }
+            },
         );
 
         my @hitos = map {$_->CreatedBy} $i->history;
@@ -58,7 +71,7 @@ SKIP: {
 done_testing();
 
 __DATA__
-FROM ubuntu
+FROM ubuntu:14.04
 
 ADD file1 /tmp/
 ADD dir1/ /tmp/dir1

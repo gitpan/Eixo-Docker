@@ -12,23 +12,37 @@ use Eixo::Docker::ImageResume;
 use Archive::Tar;
 use Cwd;
 
-my @BUILD_QUERY_PARAMS = qw(t tag q quiet nocache rm);
+my @BUILD_QUERY_PARAMS = qw(t tag q quiet nocache rm forcerm);
+my @CALLBACKS = qw(onStart onProgress onError onSuccess);
 
 has(
-    id => undef,			
-    parent => undef,		
-    created => undef,	
-    container => undef, 
-    container_config => {},
-    Size => 0, 		
-    config => {},
-    comment => undef,
-    architecture => undef,
-    docker_version => undef,
-    os => undef,
-    history=>[],
+    Id => undef,			
+    Parent => undef,		
+    Created => undef,	
+    Container => undef, 
+    ContainerConfig => {},
+    Size => 0,
+
+    Config => {},
+    Comment => undef,
+    Architecture => undef,
+    DockerVersion => undef,
+    Os => undef,
+    History=>[],
 );
 
+# Alias to fix name attribute changes in api#v1.12
+sub id { &Id(@_) }
+sub parent { &Parent(@_) }
+sub created { &Created(@_) }
+sub container { &Container(@_) }
+sub container_config { &ContainerConfig(@_) }
+sub config {&Config(@_)}
+sub comment {&Comment(@_)}
+sub architecture {&Architecture(@_)}
+sub docker_version {&DockerVersion(@_)}
+sub os {&Os(@_)}
+#sub history {&History(@_)}
 
 
 sub initialize{
@@ -138,27 +152,28 @@ sub create{
 
 	# actually, only fromImage it's supported
 
-	my $image = $args{fromImage};
+    my $image = $args{fromImage};
+    my $tag = $args{tag} || 'latest';
 
-	$args{action} = 'create';
-
-	$args{__format} = 'RAW';
-
-	$self->api->postImages(
-
-		needed=>[qw(fromImage)],
-
-		args=>\%args,
-
-		get_params=>[qw(fromImage repo tag registry)],
-
-		__callback=>sub {
-
-			$self->get(id=>$image);
-
-			return $self;
-		}
-	);
+    $args{action} = 'create';
+    
+    $args{__format} = 'RAW';
+    
+    $self->api->postImages(
+    
+    	needed=>[qw(fromImage)],
+    
+    	args=>\%args,
+    
+    	get_params=>[qw(fromImage repo tag registry)],
+    
+    	__callback=>sub {
+    
+    		$self->get(id=>"$image:$tag");
+    
+    		return $self;
+    	}
+    );
 
 }
 
@@ -178,6 +193,7 @@ sub build{
     while(my ($name, $data) = each (%args)){
         
         next if (grep {$_ eq $name} @BUILD_QUERY_PARAMS);
+        next if (grep {$_ eq $name} @CALLBACKS);
 
         $tar->add_data($name, $data);
 
@@ -244,11 +260,20 @@ sub _build {
         args => $params,
 
         onProgress => sub {
-            my $resp = JSON->new->utf8->decode($_[0]);
+            my $resp;
+
+            # Must eval json decode, because json string could be chunked, 
+            # so decode could launch exception and breaks image creation
+            # see https://github.com/alambike/eixo-docker/issues/4
+            eval{
+                $resp = JSON->new->utf8->decode($_[0]);
+            };
             
             if($resp->{"error"}){
                 $PROGRESS_ERROR = "Error building image: ".$resp->{errorDetail}->{message};
             }
+
+            &{$args{onProgress}}(@_) if(exists($args{onProgress}));
         },
 
 		__callback=>sub {
